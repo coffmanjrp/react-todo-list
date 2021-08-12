@@ -1,25 +1,9 @@
-import { useState } from 'react';
-
-const Todo = ({ todo, todos, setTodos }) => {
-  const [isComplete, setIsComplete] = useState(false);
-
-  const handleLeftClick = (id) => {
-    setIsComplete((prev) => !prev);
-  };
-
-  const handleRightClick = (id, e) => {
-    e.preventDefault();
-
-    const newTodos = todos.filter((todo) => todo.id !== id);
-
-    setTodos(newTodos);
-  };
-
+const Todo = ({ todo, handleLeftClick, handleRightClick }) => {
   return (
     <li
-      className={isComplete ? 'completed' : ''}
+      className={todo.isComplete ? 'completed' : ''}
       onClick={() => handleLeftClick(todo)}
-      onContextMenu={(e) => handleRightClick(todo.id, e)}
+      onContextMenu={(e) => handleRightClick(todo, e)}
     >
       {todo.text}
     </li>

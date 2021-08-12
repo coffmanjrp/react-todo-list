@@ -1,10 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Todo from './components/Todo';
 import './App.scss';
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [text, setText] = useState('');
+
+  useEffect(() => {
+    const ls = localStorage.getItem('todos');
+
+    if (ls) {
+      const getLs = getLocalStorage();
+      setTodos(getLs);
+    }
+  }, []);
+
+  useEffect(() => {
+    setLocalStorage(todos);
+  }, [todos]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,9 +27,37 @@ function App() {
       {
         id: todos.length + 1,
         text,
+        isComplete: false,
       },
     ]);
+
     setText('');
+  };
+
+  const handleLeftClick = (todo) => {
+    const newTodos = todos.map((obj) =>
+      obj.id === todo.id ? { ...todo, isComplete: !todo.isComplete } : obj
+    );
+
+    setTodos(newTodos);
+  };
+
+  const handleRightClick = (todo, e) => {
+    e.preventDefault();
+
+    const newTodos = todos.filter((obj) => obj.id !== todo.id);
+
+    setTodos(newTodos);
+  };
+
+  const getLocalStorage = () => {
+    const ls = JSON.parse(localStorage.getItem('todos'));
+    return ls;
+  };
+
+  const setLocalStorage = (item) => {
+    const ls = localStorage.setItem('todos', JSON.stringify(item));
+    return ls;
   };
 
   return (
@@ -37,8 +78,8 @@ function App() {
               <Todo
                 key={todo.id}
                 todo={todo}
-                todos={todos}
-                setTodos={setTodos}
+                handleLeftClick={handleLeftClick}
+                handleRightClick={handleRightClick}
               />
             ))}
         </ul>
